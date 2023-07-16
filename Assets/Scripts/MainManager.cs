@@ -12,13 +12,16 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text NombreJugador;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
 
-    
+    public static EntreScenes Instance;
+    public Text nombrejugadorjuego;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +39,14 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        //Carga el nombre del jugador de los datos del inicio
+
+        if (MainManager.Instance != null)
+        {
+            nombrejugadorjuego.text= EntreScenes.Instance.NombreJugador;
+        }
+
     }
 
     private void Update()
@@ -73,4 +84,5 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
 }
