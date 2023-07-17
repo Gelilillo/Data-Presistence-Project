@@ -6,9 +6,7 @@ public class EntreScenes : MonoBehaviour
 {
     // Start is called before the first frame update
 
-
     public static EntreScenes Instance;
-
     public string NombreJugador;
 
     void Start()

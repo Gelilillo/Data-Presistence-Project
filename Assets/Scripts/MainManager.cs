@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class MainManager : MonoBehaviour
     public Text ScoreText;
     public GameObject GameOverText;
     public Text NombreJugador;
+    public Text recordText;
     
     private bool m_Started = false;
     private int m_Points;
@@ -20,7 +22,9 @@ public class MainManager : MonoBehaviour
     private bool m_GameOver = false;
 
     public static EntreScenes Instance;
-    public Text nombrejugadorjuego;
+
+    private string nombre_record;
+    private int puntos_record;
 
     // Start is called before the first frame update
     void Start()
@@ -42,10 +46,20 @@ public class MainManager : MonoBehaviour
 
         //Carga el nombre del jugador de los datos del inicio
 
-        if (MainManager.Instance != null)
+        if (EntreScenes.Instance != null)
         {
-            nombrejugadorjuego.text= EntreScenes.Instance.NombreJugador;
+
+            //Debug.Log("El nombre del jugador es " + EntreScenes.Instance.NombreJugador);
+            NombreJugador.text= EntreScenes.Instance.NombreJugador;
         }
+
+        //Carga el record existente
+
+        LoadRecord();
+
+        recordText.text = "Best Score : " + nombre_record + " : " + puntos_record;
+
+
 
     }
 
@@ -68,7 +82,8 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                SceneManager.LoadScene(0);
+                //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
     }
@@ -82,7 +97,47 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        if (m_Points > puntos_record)
+        {
+            SaveRecord();
+        }
+
+        
         GameOverText.SetActive(true);
+        
+
+
+    }
+
+    [System.Serializable]
+    class Puntuacion_jugador
+    {
+        public string nombre;
+        public int puntos;
+    }
+
+    public void SaveRecord()
+    {
+        Puntuacion_jugador data = new Puntuacion_jugador();
+        data.nombre = NombreJugador.text;
+        data.puntos = m_Points;
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    public void LoadRecord()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            Puntuacion_jugador data = JsonUtility.FromJson<Puntuacion_jugador>(json);
+            //Trae los datos guardados
+            nombre_record = data.nombre;
+            puntos_record = data.puntos;
+        }
     }
 
 }

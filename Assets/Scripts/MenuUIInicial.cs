@@ -30,9 +30,9 @@ public class MenuUIInicial : MonoBehaviour
     }
     public void star()
     {
+
+        EntreScenes.Instance.NombreJugador = inputField.text;
         SceneManager.LoadScene(1);
-
-
 
     }
     public void Exit()
